@@ -1,0 +1,92 @@
+
+
+
+Control Unit initializes Address Space Manager
+    ASM allocates address ranges for SRAM and DRAM based on model requirements
+
+
+    DMA Engine used to load model weights from DRAM into designated SRAM banks 
+
+
+Input Processing Unit receives input data
+    processes into patches
+    embeds patches and adds positional embedding
+    output position encoded embeddings to the CNoC, addressed to first transformer block
+
+
+
+
+
+Read Flow
+
+    Compute Unit NIC packetizes read request 
+    Routers and Links route packet to Memory Hierarchy Controller via CNoC
+    ATU translates addresses if needed
+    Cache Coherence Module checks for cache state and consistency
+
+    MHC retrieves data from SRAM or DRAM
+    Data Packet is sent back from CNoC to compute Unit 
+    Compute Unit NIC depacketizes the response and forwards data to compute Unit 
+
+
+
+    Compute Unit Performs Computation
+
+
+Write Flow 
+
+    Compute Unit NIC packetizes write request with data 
+    Routes and Links routes packet to MHC
+    ATU translates addresses if needed
+    CCM updates cache states and invalidates copies if necessary
+    MHC writes data to memory (SRAM or DRAM)
+    Acknoledgement packet sent back to Compute Unit 
+
+
+
+Read Weights Flow 
+    Similar but may involve bulk data transformer
+
+
+Activation and Gradient Transfers
+    Similar but may involve other compute destination
+
+
+
+
+Task Scheduler
+    packetizes task assignment
+    Routers and Links route the packet to target Compute Unit 
+    Compute Unit NIC receives and depacketizes task
+    Compute Unit Begins execution
+
+    
+
+Sychronization
+    Coordinate execution across modules 
+    synchronization NIC sends sync packets   
+    Routers and Links deliver packets to target modules 
+    Modules adjust execution based on signals 
+
+Resource Allocation Requests
+    Module NIC sends allocation request to MAU via CNoC
+    MAU interacts with Address Space Manager
+    Allocation Resposne sent back to requesting module 
+
+Cache Coherence 
+    implement coherence protocol MESI 
+    maintain cache directory 
+    process coherence messages 
+
+
+Address Tarnslation Requests    
+    Module NIC sends address translation request to ATU
+    ATU translates
+    translated address sent back to requesting module 
+
+
+DMA Engine 
+
+    manage data movement between memory and compute units 
+    
+
